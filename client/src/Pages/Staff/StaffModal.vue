@@ -12,13 +12,10 @@
 					<form @submit.prevent="isEditing ? updateStaff() : addStaff()" class="form-horizontal" data-parsley-validate="true" name="demo-form">
 						<div class="form-group row mb-3">
 							<label class="col-lg-4 col-form-label form-label" for="id">ID:</label>
-							<div class="col-lg-8">
+							<div class="col-lg-4">
 								<input type="text" class="form-control" id="id" v-model="form.staff_id" placeholder="Required" required />
 							</div>
-						</div>
-						<div class="form-group row mb-3">
-							<label class="col-lg-4 col-form-label form-label" for="service">Service:</label>
-							<div class="col-lg-8">
+							<div class="col-lg-4">
 								<select v-model="form.service_id" class="form-select" required>
 									<option value="" disabled>Select service</option>
 									<option v-for="service in Services" :key="service.service_id" :value="service.service_id">
@@ -82,7 +79,7 @@
 						<div class="form-group row">
 							<label class="col-lg-4 col-form-label form-label">&nbsp;</label>
 							<div class="col-lg-8">
-								<button type="submit" class="btn btn-primary">Submit</button>
+								<button type="submit" class="btn btn-primary" >Submit</button>
 								<button type="button" class="btn btn-danger ms-4" @click="resetForm" data-bs-dismiss="modal">Close</button>
 							</div>
 						</div>
@@ -104,19 +101,25 @@ export default {
 		districts: Array,
 	},
 	methods: {
-		resetForm() {
-			this.$emit('reset-form');
-		},
-		addStaff() {
-			this.$emit('add-staff');
-		},
-		updateStaff() {
-			this.$emit('update-staff');
-		},
-		updateProvinceName() {
-			this.$emit('fetch-districts', this.form.province);
-		},
-	},
+  resetForm() {
+    this.$emit('reset-form');
+    this.closeModal(); // Close modal after reset
+  },
+  addStaff() {
+    this.$emit('add-staff');
+    this.closeModal(); // Close modal after adding staff
+  },
+  updateStaff() {
+    this.$emit('update-staff');
+    this.closeModal(); // Close modal after updating staff
+  },
+  closeModal() {
+    const modal = document.getElementById("modal-dialog");
+    const bootstrapModal = bootstrap.Modal.getInstance(modal);
+    bootstrapModal.hide(); // Hide the modal
+  },
+},
+
 };
 </script>
 

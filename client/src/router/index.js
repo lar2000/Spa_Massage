@@ -1,10 +1,9 @@
 // router/index.ts
 import { createRouter, createWebHistory } from 'vue-router';
-import HomePage from '../components/Home/HomePage.vue'; // Adjust the path as needed
+import HomePage from '../Pages/Home/HomePage.vue'; // Adjust the path as needed
 import Login from '../components/Login.vue';
 import Customer from '../Pages/Customer.vue'
 import Staff from '../Pages/Staff/Staff.vue'
-//import Modal from '../Pages/Staff/Modal.vue'
 import Set_product from '../Pages/Set_product.vue'
 import Product from '../Pages/Product.vue'
 import Service from '../Pages/Service.vue'

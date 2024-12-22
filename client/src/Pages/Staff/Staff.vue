@@ -112,12 +112,12 @@
 						</tr>
 					</tbody>
 				</table>
-				<Pagination :total="Staff.length" :currentPage="currentPage" :itemsPerPage="itemsPerPage" @page-changed="changePage" />
+				<Pagination :total="filteredStaff.length" :currentPage="currentPage" :itemsPerPage="itemsPerPage" 
+				@page-changed="changePage" />
 			  </div>
 			</div>
 			
-			<Modal :form="form" :isEditing="isEditing" :Services="Services" :provinces="provinces"
-				:districts="districts" 
+			<Modal :form="form" :isEditing="isEditing" :Services="Services" :provinces="provinces" :districts="districts" 
 				@reset-form="resetForm" 
 				@add-staff="addStaff" 
 				@update-staff="updateStaff"
@@ -128,6 +128,7 @@
 <script>
 import api from "../../http";
 import axios from "axios";
+import Swal from "sweetalert2";
 import Modal from "./StaffModal.vue";
 import Pagination from "./StaffPagin.vue";
 
@@ -157,8 +158,8 @@ export default {
 			isEditing: false,
 			editId: null,
 			currentPage: 1,
-            itemsPerPage: 10, 
-			searchQuery:'',  
+			itemsPerPage: 10,
+			searchQuery: "",
 		};
 	},
 
@@ -170,11 +171,11 @@ export default {
 	computed: {
 		paginatedStaff() {
 			const start = (this.currentPage - 1) * this.itemsPerPage;
-			return this.Staff.slice(start, start + this.itemsPerPage);
+			return this.filteredStaff.slice(start, start + this.itemsPerPage);
 		},
 		filteredStaff() {
 			return this.Staff.filter(staff => {
-				const staffId_Match = staff.staff_is.toString().includes(this.searchQuery);
+				const staffId_Match = staff.staff_id.toString().includes(this.searchQuery);
 				const staffName_Match = `${staff.staff_name} ${staff.staff_surname}`.toLowerCase().includes(this.searchQuery.toLowerCase());
 				return staffId_Match || staffName_Match;
 			});
@@ -221,14 +222,15 @@ export default {
 				console.error("Error fetching districts:", error);
 			}
 		},
+
 		updatePageLength(event) {
 			this.itemsPerPage = Number(event.target.value);
 			this.currentPage = 1; // Reset to first page when items per page changes
-			},
+		},
 
-        changePage(page) {
+		changePage(page) {
 			this.currentPage = page;
-			},
+		},
 
 		resetForm() {
 			this.isEditing = false;
@@ -277,11 +279,12 @@ export default {
 					district: this.form.district,
 				};
 				await axios.post(`${api}/staff`, payload);
-				alert("added! successfully.");
+				await Swal.fire("Success", "Staff added successfully!", "success");
 				this.fetchStaff();
 				this.resetForm();
 			} catch (error) {
-				console.error("Error adding staff:", error);
+				Swal.fire("Error", "Error adding staff!", "error");
+				console.error(error);
 			}
 		},
 
@@ -298,31 +301,35 @@ export default {
 					province: this.form.province,
 					district: this.form.district,
 				};
-				const response = await axios.put(
-					`${api}/staff/${this.editId}`,
-					payload
-				);
-				const index = this.Staff.findIndex(
-					(staff) => staff.staff_id === this.editId
-				);
-				if (index !== -1) this.Staff[index] = response.data;
+				await axios.put(`${api}/staff/${this.editId}`, payload);
+				await Swal.fire("Success", "Staff updated successfully!", "success");
 				this.fetchStaff();
 				this.resetForm();
-				alert("Staff updated successfully!");
 			} catch (error) {
-				console.error("Error updating staff:", error);
+				Swal.fire("Error", "Error updating staff!", "error");
+				console.error(error);
 			}
 		},
 
 		async deleteStaff(id) {
-			if (!confirm("Are you sure you want to delete this staff member?"))
-				return;
-			try {
-				await axios.delete(`${api}/staff/${id}`);
-				this.Staff = this.Staff.filter((staff) => staff.staff_id !== id);
-				alert("Staff deleted successfully!");
-			} catch (error) {
-				console.error("Error deleting staff:", error);
+			const confirmation = await Swal.fire({
+				title: "Are you sure?",
+				text: "You won't be able to revert this!",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#3085d6",
+				cancelButtonColor: "#d33",
+				confirmButtonText: "Yes, delete it!",
+			});
+			if (confirmation.isConfirmed) {
+				try {
+					await axios.delete(`${api}/staff/${id}`);
+					this.Staff = this.Staff.filter(staff => staff.staff_id !== id);
+					await Swal.fire("Deleted!", "Staff has been deleted.", "success");
+				} catch (error) {
+					Swal.fire("Error", "Error deleting staff!", "error");
+					console.error(error);
+				}
 			}
 		},
 	},

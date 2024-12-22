@@ -2,7 +2,9 @@
    <div id="header" class="app-header">
 			<!-- BEGIN navbar-header -->
 			<div class="navbar-header">
-				<router-link to="/" class="navbar-brand text-white"><img src="../../assets/img/logo/PLC.png" class="navbar-logo bg-white rounded-3"></img> <b class="me-3px">Food</b>  Factory </router-link>
+				<router-link to="/" class="navbar-brand text-white">
+				<img src="../../../public/assets/img/logo/PLC.png" class="navbar-logo bg-white rounded-3"></img> 
+				<b class="me-3px">Food</b>  Factory </router-link>
 				<button type="button" class="navbar-mobile-toggler" data-toggle="app-sidebar-mobile">
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>

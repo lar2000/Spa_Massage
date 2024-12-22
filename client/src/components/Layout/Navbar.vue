@@ -47,39 +47,18 @@
 					<div class="menu-item fs-5">
 					<router-link to="/" class="menu-link">
 					<div class="menu-icon">
-					<i class="fas fa-home"></i>
+					<i class="fas fa-qrcode"></i>
 					</div>
-					<div class="menu-text">ໜ້າຫຼັກ </div>
+					<div class="menu-text">ໜ້າຫຼັກ</div>
 					</router-link>
 					</div>
 					<div class="menu-item has-sub fs-5">
 						<a href="javascript:void(0);" class="menu-link">
-							<div class="menu-icon"><i class="fa-solid fa-cart-plus"></i></div>
-							<div class="menu-text">ຈັດການຂາຍ</div>
+							<div class="menu-icon"><i class="fa-solid fa-star"></i></div>
+							<div class="menu-text">ການບໍລິການ</div>
 							<div class="menu-caret"></div>
 						</a>
 						<div class="menu-submenu fs-14px">
-							<div class="menu-item">
-								<router-link to="/company" class="menu-link"><div class="menu-text">ລົງທະບຽນລູກຄ້າ</div></router-link>
-							</div>
-							<div class="menu-item">
-								<router-link to="/type" class="menu-link"><div class="menu-text">ອອກໃບບິນຂາຍ</div></router-link>
-							</div>
-						</div>
-					</div>
-					<div class="menu-item has-sub fs-5">
-						<a href="javascript:void(0);" class="menu-link">
-							<div class="menu-icon"><i class="fa-solid fa-gears"></i></div>
-							<div class="menu-text">ການຈັດການຮ້ານ</div>
-							<div class="menu-caret"></div>
-						</a>
-						<div class="menu-submenu fs-14px">
-							<div class="menu-item">
-								<router-link to="/staff" class="menu-link"><div class="menu-text">ພະນັກງານ</div></router-link>
-							</div>
-							<div class="menu-item">
-								<router-link to="/customer" class="menu-link"><div class="menu-text">ລູກຄ້າ</div></router-link>
-							</div>
 							<div class="menu-item">
 								<router-link to="/service_type" class="menu-link"><div class="menu-text">ປະເພດບໍລິການ</div></router-link>
 							</div>
@@ -88,26 +67,10 @@
 							</div>
 						</div>
 					</div>
-					<div class="menu-item has-sub fs-5">
-						<a href="javascript:void(0);" class="menu-link">
-							<div class="menu-icon"><i class="fa-solid fa-layer-group"></i></div>
-							<div class="menu-text">ສາງຜະລິດຕະພັນ</div>
-							<div class="menu-caret"></div>
-						</a>
-						<div class="menu-submenu fs-14px">
-							<div class="menu-item">
-								<router-link to="/product" class="menu-link"><div class="menu-text">ຜະລິດຕະພັນ</div></router-link>
-							</div>
-							<div class="menu-item">
-								<router-link to="/product_type" class="menu-link"><div class="menu-text">ເຊັດຜະລິດຕະພັນ</div></router-link>
-							</div>
-						</div>
-					</div>
-
 					<div class="menu-item fs-5">
 					<router-link to="/booking" class="menu-link">
 					<div class="menu-icon">
-					<i class="fas fa-receipt"></i>
+					<i class="fas fa-bookmark"></i>
 					</div>
 					<div class="menu-text">ຈອງບໍລິການ</div>
 					</router-link>
@@ -133,21 +96,31 @@
 					</div>
 					<div class="menu-item has-sub fs-5">
 						<a href="javascript:void(0);" class="menu-link">
-							<div class="menu-icon"><i class="fa-solid fa-gear"></i></div>
+							<div class="menu-icon"><i class="fa-solid fa-gears"></i></div>
 							<div class="menu-text">ການຕັ້ງຄ່າ</div>
 							<div class="menu-caret"></div>
 						</a>
 						<div class="menu-submenu fs-14px">
-							<div class="menu-item">
-								<router-link to="/model" class="menu-link"><div class="menu-text">ສາງສະຕ໋ອກສິນຄ້າ</div></router-link>
+							<div class="menu-item has-sub fs-5">
+								<a href="javascript:;" class="menu-link">
+									<div class="menu-text">ສະຕ໋ອກສິນຄ້າ</div>
+									<div class="menu-caret"></div>
+								</a>
+								<div class="menu-submenu">
+									<div class="menu-item">
+										<router-link to="/product" class="menu-link">
+										   <div class="menu-text">ສິນຄ້າ</div></router-link></div>
+									<div class="menu-item">
+										<router-link to="/set_product" class="menu-link">
+										   <div class="menu-text">ເຊັດສິນຄ້າ</div></router-link></div>
+								</div>
 							</div>
 							<div class="menu-item">
-								<router-link to="/company" class="menu-link"><div class="menu-text">ພະແນກ</div></router-link>
+								<router-link to="/staff" class="menu-link"><div class="menu-text">ພະນັກງານ</div></router-link>
 							</div>
 							<div class="menu-item">
-								<router-link to="/type" class="menu-link"><div class="menu-text">ຜູ້ໃຊ້ລະບົບ</div></router-link>
+								<router-link to="/customer" class="menu-link"><div class="menu-text">ລູກຄ້າ</div></router-link>
 							</div>
-							
 						</div>
 					</div>
 					

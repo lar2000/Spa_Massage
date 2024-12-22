@@ -12,13 +12,13 @@ app.use(express.json()); // To parse JSON bodies
 const service = require('./api/service');
 const staff = require('./api/staff');  
 const country = require('./api/country');
-const user = require('./api/users');
+const customer = require('./api/customer');
 
 
 app.use('/', service)
 app.use('/', staff)
 app.use('/', country)
-app.use('/', user)
+app.use('/', customer)
 
 // Start server
 const port = process.env.PORT || 5000;
