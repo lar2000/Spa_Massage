@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import Login from './components/Login.vue';
+//import Web from './components/web/WebPage.vue';
 import Header from './components/Layout/Header.vue';
 import Navbar from './components/Layout/Navbar.vue';
 import { useRoute } from 'vue-router';

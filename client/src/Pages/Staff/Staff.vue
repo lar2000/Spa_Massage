@@ -3,8 +3,8 @@
 		<!-- Existing content -->
 		<!-- BEGIN breadcrumb -->
 		<ol class="breadcrumb float-xl-end">
-			<li class="breadcrumb-item"><a href="javascript:;">Home</a></li>
-			<li class="breadcrumb-item"><a href="javascript:;">Tables</a></li>
+			<li class="breadcrumb-item"><a href="javascript:;">Setting</a></li>
+			<li class="breadcrumb-item"><router-link to="/">Staff</router-link></li>
 			<li class="breadcrumb-item active">Managed Tables Staff List</li>
 		</ol>
 		<!-- END breadcrumb -->
@@ -77,16 +77,13 @@
 						<tr v-for="(staff, index) in paginatedStaff" :key="staff.staff_id" class="odd gradeX">
 							<td width="1%" class="fw-bold">{{ index + 1 + (currentPage - 1) * itemsPerPage }}</td>
 							<td width="1%" class="with-img">
-								<img src="../../assets/user.jpeg" class="rounded h-30px my-n1 mx-n1" />
+								<img v-if="staff.profile" :src="`http://localhost:5000/${staff.profile}`" class="rounded h-30px my-n1 mx-n1"/>
 							</td>
-							<td>{{ staff.staff_id }}</td>
+							<td>{{ formatStaffId(staff.staff_id) }}</td>
 							<td>{{ staff.staff_name }} {{ staff.staff_surname }}</td>
 							<td>{{ staff.email }}</td>
 							<td>{{ staff.tell }}</td>
-							<td>
-								{{ staff.village }}, {{ staff.district_name }},
-								{{ staff.province_name }}
-							</td>
+							<td>{{ staff.village }}, {{ staff.district_name }},{{ staff.province_name }}</td>
 							<td>{{ staff.service_name }}</td>
 							<td>
 								<div class="panel-heading">
@@ -154,6 +151,7 @@ export default {
 				village: "",
 				province: "",
 				district: "",
+				profile: "",
 			},
 			isEditing: false,
 			editId: null,
@@ -183,6 +181,9 @@ export default {
 	},
 
 	methods: {
+		formatStaffId(id) {
+			return String(id).padStart(10, '0'); // Pads the ID to 10 characters with leading zeros
+			},
 		async fetchStaff() {
 			try {
 				const response = await axios.get(`${api}/staff`);
@@ -222,7 +223,7 @@ export default {
 				console.error("Error fetching districts:", error);
 			}
 		},
-
+		
 		updatePageLength(event) {
 			this.itemsPerPage = Number(event.target.value);
 			this.currentPage = 1; // Reset to first page when items per page changes
@@ -245,6 +246,7 @@ export default {
 				village: "",
 				province: "",
 				district: "",
+				profile: "",
 			};
 		},
 
@@ -261,24 +263,34 @@ export default {
 				village: staff.village,
 				province: staff.province,
 				district: staff.district,
+				profile: staff.profile,
 			};
 			this.fetchDistricts(staff.province);
 		},
 
 		async addStaff() {
 			try {
-				const payload = {
-					staff_id: this.form.staff_id,
-					service_id_fk: this.form.service_id,
-					staff_name: this.form.staff_name,
-					staff_surname: this.form.staff_surname,
-					email: this.form.email,
-					tell: this.form.tell,
-					village: this.form.village,
-					province: this.form.province,
-					district: this.form.district,
-				};
-				await axios.post(`${api}/staff`, payload);
+				const formData = new FormData();
+				formData.append('staff_id', this.form.staff_id);
+				formData.append('service_id_fk', this.form.service_id);
+				formData.append('staff_name', this.form.staff_name);
+				formData.append('staff_surname', this.form.staff_surname);
+				formData.append('email', this.form.email);
+				formData.append('tell', this.form.tell);
+				formData.append('village', this.form.village);
+				formData.append('province', this.form.province);
+				formData.append('district', this.form.district);
+				
+				const profileInput = document.getElementById('profile');
+				if (profileInput.files.length > 0) {
+					formData.append('profile', profileInput.files[0]);
+				}
+
+				await axios.post(`${api}/staff`, formData, {
+					headers: {
+						'Content-Type': 'multipart/form-data'
+					}
+				});
 				await Swal.fire("Success", "Staff added successfully!", "success");
 				this.fetchStaff();
 				this.resetForm();
@@ -290,18 +302,27 @@ export default {
 
 		async updateStaff() {
 			try {
-				const payload = {
-					staff_id: this.form.staff_id,
-					service_id_fk: this.form.service_id,
-					staff_name: this.form.staff_name,
-					staff_surname: this.form.staff_surname,
-					email: this.form.email,
-					tell: this.form.tell,
-					village: this.form.village,
-					province: this.form.province,
-					district: this.form.district,
-				};
-				await axios.put(`${api}/staff/${this.editId}`, payload);
+				const formData = new FormData();
+				formData.append('staff_id', this.form.staff_id);
+				formData.append('service_id_fk', this.form.service_id);
+				formData.append('staff_name', this.form.staff_name);
+				formData.append('staff_surname', this.form.staff_surname);
+				formData.append('email', this.form.email);
+				formData.append('tell', this.form.tell);
+				formData.append('village', this.form.village);
+				formData.append('province', this.form.province);
+				formData.append('district', this.form.district);
+				
+				const profileInput = document.getElementById('profile');
+				if (profileInput.files.length > 0) {
+					formData.append('profile', profileInput.files[0]);
+				}
+
+				await axios.put(`${api}/staff/${this.editId}`, formData, {
+					headers: {
+						'Content-Type': 'multipart/form-data'
+					}
+				});
 				await Swal.fire("Success", "Staff updated successfully!", "success");
 				this.fetchStaff();
 				this.resetForm();

@@ -6,6 +6,7 @@
 				<li class="breadcrumb-item active">Predefined CSS Class</li>
 			</ol>
 			<h1 class="page-header">Product Page</h1>
+
     </div>
 </template>
 <script>

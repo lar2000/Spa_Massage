@@ -1,11 +1,11 @@
 const express = require('express');
 const cors = require('cors');
-
+const path = require('path');
 const app = express();
 
 // Middlewares
 app.use(cors());
-app.use(express.json()); // To parse JSON bodies
+app.use(express.json()); // To parse JSON bodie
 
 // import ແບບ ໃຊ້ module.export = city, module.export = province, module.export = user
 
@@ -19,6 +19,7 @@ app.use('/', service)
 app.use('/', staff)
 app.use('/', country)
 app.use('/', customer)
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Start server
 const port = process.env.PORT || 5000;

@@ -4,7 +4,7 @@
 			<div class="navbar-header">
 				<router-link to="/" class="navbar-brand text-white">
 				<img src="../../../public/assets/img/logo/PLC.png" class="navbar-logo bg-white rounded-3"></img> 
-				<b class="me-3px">Food</b>  Factory </router-link>
+				<b class="me-3px">Spa</b>  Massages </router-link>
 				<button type="button" class="navbar-mobile-toggler" data-toggle="app-sidebar-mobile">
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
@@ -83,6 +83,10 @@
 							<a href="javascript:;" class="text-decoration-none">View more</a>
 						</div>
 					</div>
+				</div>
+				<div class="navbar-item">
+					<router-link to="/webhomepage" class="btn btn-sm btn-dark">Web-view<i class="fa fa-arrow-right ms-5px"></i>
+					</router-link>
 				</div>
 				
 				<div class="navbar-item navbar-user dropdown">

@@ -1,8 +1,9 @@
 // router/index.ts
 import { createRouter, createWebHistory } from 'vue-router';
+import WebPage from '../components/web/WebPage.vue'; // Adjust the path as needed
 import HomePage from '../Pages/Home/HomePage.vue'; // Adjust the path as needed
 import Login from '../components/Login.vue';
-import Customer from '../Pages/Customer.vue'
+import Customer from '../Pages/Customer/Customer.vue'
 import Staff from '../Pages/Staff/Staff.vue'
 import Set_product from '../Pages/Set_product.vue'
 import Product from '../Pages/Product.vue'
@@ -14,6 +15,11 @@ const routes = [
         path: '/',
         name: 'Home',
         component: HomePage
+    },
+    {
+        path: '/webhomepage',
+        name: 'WebPage',
+        component: WebPage
     },
     {
         path: '/login',

@@ -13,12 +13,12 @@
       <!-- END login-cover -->
       <div class="login-container bg-factory text-dark rounded-3 py-3 pb-4">
 		 <div class="text-center mb-3">
-		<img src="../../assets/img/logo/PLC.png" class="navbar-logo bg-white rounded-pill w-40" />
+		 <img src="../../assets/img/logo/PLC.png" class="navbar-logo bg-white rounded-pill w-40" />
         </div>
-		<div class="login-header">
+		 <div class="login-header">
           <div class="brand">
             <div class="d-flex align-items-center text-white">
-               <b class="me-3 ">PLC</b> ຍິນດີຕ້ອນຮັບ
+               <b class="me-3 ">PLC</b> ຍິນດີຕ້ອນຮັບ 🙌
             </div>
             <small class="text-white">ນຳໃຊ້ລະບົບ ຈັດການໂຮງງານຜະລິດອາຫານສັດ</small>
           </div>
