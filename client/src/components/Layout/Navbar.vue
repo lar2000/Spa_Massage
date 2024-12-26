@@ -101,7 +101,7 @@
 							<div class="menu-caret"></div>
 						</a>
 						<div class="menu-submenu fs-14px">
-							<div class="menu-item has-sub fs-5">
+							<div class="menu-item has-sub fs-14px">
 								<a href="javascript:;" class="menu-link">
 									<div class="menu-text">ສະຕ໋ອກສິນຄ້າ</div>
 									<div class="menu-caret"></div>

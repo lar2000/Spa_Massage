@@ -4,27 +4,27 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title" id="customerModalLabel">
-						{{ isEditing ? "ແກ້ໄຂຂໍ້ມູນລູກຄ້າ" : "ເພີ່ມຂໍ້ມູນລູກຄ້າ" }}
+						{{ isEditing ? "ແກ້ໄຂຂໍ້ມູນສະມາຊິກ" : "ສະໝັກສະມາຊິກ" }}
 					</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" @click="resetForm" aria-hidden="true"></button>
 				</div>
 				<div class="modal-body">
 					<form @submit.prevent="isEditing ? updatecustomer() : addcustomer()" class="form-horizontal" data-parsley-validate="true" name="demo-form">
 						<div class="form-group row mb-3">
-							<label class="col-lg-2 col-form-label form-label" for="name">Name :</label>
-							<div class="col-lg-10">
+							<label class="col-lg-3 col-form-label form-label" for="name">ຊື່ :</label>
+							<div class="col-lg-9">
 								<input type="text" class="form-control" id="name" v-model="form.cust_name" placeholder="Enter name..." required />
 							</div>
 						</div>
 						<div class="form-group row mb-3">
-							<label class="col-lg-2 col-form-label form-label" for="surname">Surname :</label>
-							<div class="col-lg-10">
+							<label class="col-lg-3 col-form-label form-label" for="surname">ນາມສະກຸນ :</label>
+							<div class="col-lg-9">
 								<input type="text" class="form-control" id="surname" v-model="form.cust_surname" placeholder="Enter surname..." required />
 							</div>
 						</div>
 						<div class="form-group row mb-3">
-							<label class="col-lg-2 col-form-label form-label" for="email">Email :</label>
-							<div class="col-lg-10">
+							<label class="col-lg-3 col-form-label form-label" for="email">ອີເມວ໌ :</label>
+							<div class="col-lg-9">
 								<input type="email" class="form-control" id="email" v-model="form.email" placeholder="Enter email..." required />
 							</div>
 						</div>
@@ -36,8 +36,8 @@
                             <a class="btn btn-social-icon btn-vk mb-2  ms-2"><i class='bx bxl-vk'></i></a>
                         </div> -->
 						<div class="form-group row">
-							<label class="col-lg-2 col-form-label form-label">&nbsp;</label>
-							<div class="col-lg-10">
+							<label class="col-lg-3 col-form-label form-label">&nbsp;</label>
+							<div class="col-lg-9">
 								<button type="submit" class="btn btn-primary" >Submit</button>
 								<button type="button" class="btn btn-danger ms-4" @click="resetForm" data-bs-dismiss="modal">Close</button>
 							</div>

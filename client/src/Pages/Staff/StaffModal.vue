@@ -28,37 +28,37 @@
 							</div>
 						</div>
 						<div class="form-group row mb-3">
-							<label class="col-lg-2 col-form-label form-label" for="name">Name :</label>
+							<label class="col-lg-2 col-form-label form-label" for="name">ຊື່ :</label>
 							<div class="col-lg-10">
 								<input type="text" class="form-control" id="name" v-model="form.staff_name" placeholder="Enter name..." required />
 							</div>
 						</div>
 						<div class="form-group row mb-3">
-							<label class="col-lg-2 col-form-label form-label" for="surname">Surname :</label>
+							<label class="col-lg-2 col-form-label form-label" for="surname">ນາມສະກຸນ:</label>
 							<div class="col-lg-10">
 								<input type="text" class="form-control" id="surname" v-model="form.staff_surname" placeholder="Enter surname..." required />
 							</div>
 						</div>
 						<div class="form-group row mb-3">
-							<label class="col-lg-2 col-form-label form-label" for="email">Email :</label>
+							<label class="col-lg-2 col-form-label form-label" for="email">ອີເມວ໌ :</label>
 							<div class="col-lg-10">
 								<input type="email" class="form-control" id="email" v-model="form.email" placeholder="Enter email..." required />
 							</div>
 						</div>
 						<div class="form-group row mb-3">
-							<label class="col-lg-2 col-form-label form-label" for="tell">Phone :</label>
+							<label class="col-lg-2 col-form-label form-label" for="tell">ເບີໂທ :</label>
 							<div class="col-lg-10">
 								<input type="number" class="form-control" id="tell" v-model="form.tell" placeholder="Enter Phone..." required />
 							</div>
 						</div>
 						<div class="form-group row mb-3">
-							<label class="col-lg-2 col-form-label form-label" for="village">Village :</label>
+							<label class="col-lg-2 col-form-label form-label" for="village">ບ້ານ :</label>
 							<div class="col-lg-10">
 								<input type="text" class="form-control" id="village" v-model="form.village" placeholder="Enter village..." required />
 							</div>
 						</div>
 						<div class="form-group row mb-3">
-							<label class="col-lg-2 col -form-label" for="province">Countries :</label>
+							<label class="col-lg-2 col-form-label" for="province">Country :</label>
 							<div class="col-lg-5">
 								<select v-model="form.province" @change="updateProvinceName" class="form-select" required>
 									<option value="" disabled>Select Province</option>

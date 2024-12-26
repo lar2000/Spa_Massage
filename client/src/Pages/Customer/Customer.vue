@@ -76,12 +76,14 @@
 							<td>{{ formatcustomerId(customer.cust_id) }}</td>
 							<td>{{ customer.cust_name }} {{ customer.cust_surname }}</td>
 							<td>{{ customer.email }}</td>
-              <td>
-                <span class="badge border border-success text-success px-2 pt-5px pb-5px rounded fs-12px d-inline-flex align-items-center">
-                <i class="fa fa-circle fs-9px fa-fw me-5px"></i> ສະມາຊິກ</span>
-              </td>
-							<!-- <td>{{ customer.status }}</td> -->
 							<td>
+							<span v-if="customer.status === 1" class="badge border border-success text-success px-2 pt-5px pb-5px rounded fs-12px d-inline-flex align-items-center">
+							<i class="fa fa-circle fs-9px fa-fw me-5px"></i> ສະມາຊິກ
+							</span>
+							<span v-else class="badge border border-warning text-warning px-2 pt-5px pb-5px rounded fs-12px d-inline-flex align-items-center">
+							<i class="fa fa-circle fs-9px fa-fw me-5px"></i> ທົ່ວໄປ
+							</span>
+							</td>
 								<div class="panel-heading">
 									<div class="btn-group my-n1">
 										<a href="javascript:;" class="btn-primary btn-sm dropdown-toggle"
@@ -101,7 +103,6 @@
 										</div>
 									</div>
 								</div>
-							</td>
 						</tr>
 					</tbody>
 				</table>
@@ -121,7 +122,7 @@ import api from "../../http";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Modal from "./CustModal.vue";
-import Pagination from "./Pagin.vue";
+import Pagination from "../PaginPages.vue";
 
 export default {
 	name: "ExVueCustomer",
@@ -154,7 +155,8 @@ export default {
 			return this.customer.filter(customer => {
 				const idMatch = customer.cust_id.toString().includes(this.searchQuery);
 				const nameMatch = `${customer.cust_name} ${customer.cust_surname}`.toLowerCase().includes(this.searchQuery.toLowerCase());
-				return idMatch || nameMatch;
+				const statusMatch = customer.status === 1 ? "ສະມາຊິກ" : "ທົ່ວໄປ";
+				return idMatch || nameMatch || statusMatch.toLowerCase().includes(this.searchQuery.toLowerCase());;
 			});
 		},
 	},

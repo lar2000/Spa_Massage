@@ -4,17 +4,13 @@ const db = require('./db_connection');
 const customer = express.Router();
 
 // Define the fields to use for customer operations
-const customerFields = [
-  'cust_name',
-  'cust_surname',
-  'email',
-  'status',
-];
+const customerFields = ['cust_id','cust_name','cust_surname','email','status'];
+const InsertFields = ['cust_id','cust_name','cust_surname','email','status'];
 
 // Get all customers
 customer.get('/customer', (req, res) => {
   db.query(
-    `SELECT cust_id, ${customerFields.join(', ')} FROM customer`,
+    `SELECT ${customerFields.join(', ')} FROM customer`,
     (err, results) => {
       if (err) {
         console.error(err.message);
@@ -27,24 +23,20 @@ customer.get('/customer', (req, res) => {
 
 // Add new customer
 customer.post('/customer', (req, res) => {
-  const values = customerFields.map(field => req.body[field]);
+  const Defaults = { ...req.body, status: req.body.status !== undefined ? req.body.status: true,
 
-  // Validate input data
-  for (let i = 0; i < customerFields.length; i++) {
-    if (!values[i]) {
-      return res.status(400).json({ error: `${customerFields[i]} is required.` });
-    }
-  }
+  };
+  const values = InsertFields.map(field => Defaults[field]);
 
-  const query = `INSERT INTO customer (${customerFields.join(', ')}) 
-  VALUES (${customerFields.map(() => '?').join(', ')})`;
+  const query = `INSERT INTO customer (${InsertFields.join(', ')}) 
+  VALUES (${InsertFields.map(() => '?').join(', ')})`;
 
   db.query(query, values, (err, result) => {
     if (err) {
       console.error(err.message);
       return res.status(500).json({ error: 'Failed to add customer.' });
     }
-    res.status(201).json({ id: result.insertId, ...req.body });
+    res.status(201).json({ id: result.insertId, ...Defaults });
   });
 });
 
@@ -72,7 +64,9 @@ customer.put('/customer/:id', (req, res) => {
 
 // Delete a customer
 customer.delete('/customer/:id', (req, res) => {
-  db.query('DELETE FROM customer WHERE cust_id = ?', [req.params.id], (err) => {
+  const query = 'UPDATE customer SET status = ? WHERE cust_id = ?';
+  const values = [false, req.params.id];
+  db.query(query, values, (err) => {
     if (err) {
       console.error(err.message);
       return res.status(500).json({ error: 'Failed to delete customer.' });

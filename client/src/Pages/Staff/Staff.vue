@@ -83,7 +83,7 @@
 							<td>{{ staff.staff_name }} {{ staff.staff_surname }}</td>
 							<td>{{ staff.email }}</td>
 							<td>{{ staff.tell }}</td>
-							<td>{{ staff.village }}, {{ staff.district_name }},{{ staff.province_name }}</td>
+							<td>{{ staff.village }}, {{ staff.district_name }}, {{ staff.province_name }}</td>
 							<td>{{ staff.service_name }}</td>
 							<td>
 								<div class="panel-heading">
@@ -127,7 +127,7 @@ import api from "../../http";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Modal from "./StaffModal.vue";
-import Pagination from "./StaffPagin.vue";
+import Pagination from "../PaginPages.vue";
 
 export default {
 	name: "ExVueStaff",
