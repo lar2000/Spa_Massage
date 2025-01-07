@@ -62,7 +62,7 @@ staff.post('/staff', upload.single('profile'), (req, res) => {
   const profile = req.file ? `uploads/profiles/${req.file.filename}` : null;
 
   function generateRandomStaffId() {
-    const randomId = Math.random().toString(36).substr(2, 5).toUpperCase();
+    const randomId = Math.random().toString(36).slice(2, 7).toUpperCase();
     return `S-${randomId}`;
   }
 

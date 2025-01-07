@@ -24,7 +24,7 @@ customer.post('/customer', (req, res) => {
 
   // Function to generate a random cust_id starting with 'N-' and followed by 5 random characters
   function generateRandomCustId() {
-    const randomId = Math.random().toString(36).substr(2, 5).toUpperCase(); // 5 random alphanumeric characters
+    const randomId = Math.random().toString(36).slice(2, 7).toUpperCase(); // 5 random alphanumeric characters
     return `N-${randomId}`;
   }
 

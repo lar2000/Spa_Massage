@@ -5,19 +5,16 @@ const fs = require('fs');
 const db = require('./db_connection');
 
 const product = express.Router();
-// Define the fields in an array
 const productFields = [
-  'pro_id',
   'pro_name',
+  'size',
   'amount',
   'price',
   'total',
 ];
 const productFieldsString = productFields.join(', ');
-
-const productSetClause = productFields.map(field => `${field} = ?`).join(', ');
-
 const storage = multer.diskStorage({
+
   destination: (req, file, cb) => {
     const uploadDir = path.join(__dirname, '../../uploads', 'images');
     if (!fs.existsSync(uploadDir)) {
@@ -32,9 +29,28 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+// Function to generate a unique product ID starting with 'P-'
+function generateProductId(callback) {
+  const randomId = Math.random().toString(36).slice(2, 7).toUpperCase();
+  const proId = `P-${randomId}`;
+
+  // Check if the generated pro_id already exists in the database
+  db.query('SELECT pro_id FROM product WHERE pro_id = ?', [proId], (err, results) => {
+    if (err) {
+      return callback(err, null);
+    }
+
+    if (results.length > 0) {
+      return generateProductId(callback); // Recursively call the function
+    }
+    // If no duplicate, return the unique pro_id
+    callback(null, proId);
+  });
+}
+
 product.get('/product', (req, res) => {
   db.query(
-    `SELECT ${productFieldsString}, img_path FROM product`,
+    `SELECT ${productFieldsString}, img_path, pro_id FROM product`,
     (err, results) => {
       if (err) {
         return res.status(500).json({ error: err.message });
@@ -44,27 +60,34 @@ product.get('/product', (req, res) => {
   );
 });
 
-//Add new product
+// Add new product
 product.post('/product', upload.single('img_path'), (req, res) => {
-  const productFields = ['pro_id', 'pro_name', 'amount', 'price', 'total'];
   const values = productFields.map(field => req.body[field]);
   const image = req.file ? `uploads/images/${req.file.filename}` : null;
 
-  const query = `INSERT INTO product (${productFieldsString}, img_path) 
-  VALUES (?, ?, ?, ?, ?, ?)`;
-  db.query(query, [...values, image], (err, result) => {
+  // Generate a unique product ID
+  generateProductId((err, proId) => {
     if (err) {
-      return res.status(500).json({ error: err.message });
+      return res.status(500).json({ error: 'Error generating unique product ID' });
     }
-    res.status(201).json({ id: result.insertId, ...req.body });
+
+    const query = `INSERT INTO product (${productFieldsString}, img_path, pro_id) 
+    VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    db.query(query, [...values, image, proId], (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.status(201).json({ id: result.insertId, pro_id: proId, ...req.body });
+    });
   });
 });
+
+// Update product details
 product.put('/product/:id', upload.single('img_path'), (req, res) => {
-  const productFields = ['pro_id', 'pro_name', 'amount', 'price', 'total']; 
+  const productFields = ['pro_name', 'size', 'amount', 'price', 'total']; 
   const values = productFields.map(field => req.body[field]);
   const image = req.file ? `uploads/images/${req.file.filename}` : null;
 
-  // Set up the base query
   let query = `UPDATE product SET ${productFields.map(field => `${field} = ?`).join(', ')}`;
   const queryParams = [...values];
 
@@ -85,8 +108,7 @@ product.put('/product/:id', upload.single('img_path'), (req, res) => {
     res.status(200).json({ id: req.params.id, ...req.body, image });
   });
 });
-
-
+// Delete product
 product.delete('/product/:id', (req, res) => {
   db.query('DELETE FROM product WHERE pro_id = ?', [req.params.id], (err) => {
     if (err) {

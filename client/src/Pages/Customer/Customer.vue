@@ -81,7 +81,7 @@
 					<tbody>
 						<tr v-for="(customer, index) in paginatedcustomer" :key="customer.id" class="odd gradeX">
 							<td width="1%" class="fw-bold">{{ index + 1 + (currentPage - 1) * itemsPerPage }}</td>
-							<td>{{ formatcustomerId(customer.cust_id) }}</td>
+							<td>{{ customer.cust_id }}</td>
 							<td>{{ customer.cust_name }} {{ customer.cust_surname }}</td>
 							<td>{{ customer.email }}</td>
 							<td>
@@ -171,9 +171,6 @@ export default {
 		},
 	},
 	methods: {
-		formatcustomerId(id) {
-			return String(id).padStart();
-		},
 		async fetchcustomer() {
 			try {
 				const response = await axios.get(`${api}/customer`);

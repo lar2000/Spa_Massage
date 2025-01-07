@@ -10,8 +10,6 @@
 				</div>
 				<div class="modal-body">
 					<form @submit.prevent="isEditing ? updateproduct() : addproduct()" class="form-horizontal" data-parsley-validate="true" name="demo-form">
-							  <div class="row">
-                                
                          <div class="row">
                             <div class="col-md-4 align-content-center" style="position: relative;">
                                 <label role="button" style="cursor: pointer;">
@@ -24,15 +22,18 @@
                                 <label  class="form-label fs-6">ຊື່ສິນຄ້າ:</label>
                                 <input type="text" class="form-control mb-2" v-model="form.pro_name" placeholder="..." required>
 
+								<label  class="form-label fs-6">ຂະໜາດ(ml):</label>
+                                <input type="number" class="form-control mb-2" v-model="form.size" placeholder="..." required>
+
                                 <label  class="form-label fs-6">ຈຳນວນ:</label>
-								<input type="text" id="amount" class="form-control" v-model="form.amount"
+								<input type="text" id="amount" class="form-control" v-model="form.amount" placeholder="1234..." required
 								 @input="validateNumericInput('amount')"/>
                               
-                                <label  class="form-label fs-6">ລາຄາ:</label>
-								<input type="text" id="price" class="form-control" v-model="form.price"
+                                <label  class="form-label fs-6">ລາຄາ:(ກີບ)</label>
+								<input type="text" id="price" class="form-control" v-model="form.price" placeholder="1234..." required
 								 @input="validateNumericInput('price')"/>
 
-                                <label  class="form-label fs-6">ລາຄາລວມ:</label>
+                                <label  class="form-label fs-6">ລາຄາລວມ:(ກີບ)</label>
                                 <input type="number" class="form-control mb-2" v-model="form.total" readonly>
 
                                 <button type="submit" class="btn btn-primary" >Submit</button>
@@ -40,7 +41,6 @@
                           </div>
                         </div>
                        </div>
-                    </div>
 					</form>
 				</div>
 			</div>

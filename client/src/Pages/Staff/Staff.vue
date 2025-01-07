@@ -79,7 +79,7 @@
 							<td width="1%" class="with-img">
 								<img v-if="staff.profile" :src="`http://localhost:5000/${staff.profile}`" class="rounded h-30px my-n1 mx-n1"/>
 							</td>
-							<td>{{ formatStaffId(staff.staff_id) }}</td>
+							<td>{{ staff.staff_id }}</td>
 							<td>{{ staff.staff_name }} {{ staff.staff_surname }}</td>
 							<td>{{ staff.email }}</td>
 							<td>{{ staff.tell }}</td>
@@ -182,9 +182,6 @@ export default {
 	},
 
 	methods: {
-		formatStaffId(id) {
-			return String(id).padStart(); // Pads the ID to 10 characters with leading zeros
-			},
 		async fetchStaff() {
 			try {
 				const response = await axios.get(`${api}/staff`);

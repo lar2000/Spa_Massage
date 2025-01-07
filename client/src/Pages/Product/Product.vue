@@ -73,8 +73,9 @@
 						<tr>
 							<th width="1%">ລ/ດ</th>
 							<th width="1%" data-orderable="false">#</th>
-							<th class="text-nowrap">id</th>
+							<th class="text-nowrap">ລະຫັດ</th>
 							<th class="text-nowrap">ຊື່</th>
+							<th class="text-nowrap">ຂະໜາດ(ml)</th>
 							<th class="text-nowrap">ຈຳນວນ</th>
 							<th class="text-nowrap">ລາຄາ</th>
 							<th class="text-nowrap">ລາຄາລວມ</th>
@@ -87,8 +88,9 @@
 							<td width="1%" class="with-img">
 								<img v-if="product.img_path" :src="`http://localhost:5000/${product.img_path}`" class="rounded h-30px my-n1 mx-n1"/>
 							</td>
-							<td>{{ formatproductId(product.pro_id) }}</td>
+							<td>{{ product.pro_id }}</td>
 							<td>{{ product.pro_name }}</td>
+							<td>{{ product.size }} ml</td>
 							<td>{{ product.amount }}</td>
 							<td>{{ product.price }}</td>
 							<td>{{ product.total }}</td>
@@ -100,6 +102,10 @@
 											<i class="bx bx-dots-horizontal-rounded"></i>
 										</a>
 										<div class="dropdown-menu dropdown-menu-end">
+											<a href="#viewModal" class="dropdown-item" data-bs-toggle="modal"
+											    @click="viewProduct(product)">
+												<i class="fas fa-eye"></i>
+												view</a>
 											<a href="#modal-dialog" class="dropdown-item" data-bs-toggle="modal"
 												@click="showEditForm(product)">
 												<i class="fas fa-pen-to-square" style="color: dodgerblue"></i>
@@ -120,7 +126,7 @@
 				@page-changed="changePage" />
 			  </div>
 			</div>
-			
+			<ViewModal :product="selectedProduct" />
 			<Modal :form="form" :isEditing="isEditing" 
 				@reset-form="resetForm" 
 				@add-product="addproduct" 
@@ -133,12 +139,14 @@ import axios from 'axios';
 import api from '../../http';
 import Swal from 'sweetalert2';
 import Modal from './ProModal.vue'
+import ViewModal from './ViewDetail.vue'
 import Pagin from '../PaginPages.vue'
 
 export default {
   name: 'ExVueProduct',
   components: {
 	Modal,
+	ViewModal,
 	Pagin,
   },
 
@@ -148,8 +156,9 @@ export default {
 			form: {
 				pro_id: "",
 				pro_name: "",
-				amount: 0,
-				price: 0,
+				size: "",
+				amount: "",
+				price: "",
 				total: 0,
 				img_path: "",
 			
@@ -159,6 +168,7 @@ export default {
 			currentPage: 1,
 			itemsPerPage: 10,
 			searchQuery: "",
+			selectedProduct: null,
 		};
 	},
 
@@ -184,9 +194,6 @@ export default {
 	},
 
 	methods: {
-		formatproductId(id) {
-			return String(id).padStart(10, '0'); // Pads the ID to 10 characters with leading zeros
-			},
 		async fetchproduct() {
 			try {
 				const response = await axios.get(`${api}/product`);
@@ -213,6 +220,7 @@ export default {
 			this.editId = null;
 			this.form = {
 				pro_name: "",
+				size: "",
 				amount: 0,
 				price: 0,
 				total: 0,
@@ -226,18 +234,23 @@ export default {
 			this.form = {
 				pro_id: product.pro_id,
 				pro_name: product.pro_name,
+				size: product.size,
 				amount: product.amount,
 				price: product.price,
 				total: product.total,
 				img_path: product.img_path,
 			};
-    },
+        },
+		viewProduct(product) {
+				this.selectedProduct = product; // Set the selected product to view
+		    },
 
 		async addproduct() {
 			try {
 				const formData = new FormData();
 				formData.append('pro_id', this.form.pro_id);
 				formData.append('pro_name', this.form.pro_name);
+				formData.append('size', this.form.size);
 				formData.append('amount', this.form.amount);
 				formData.append('price', this.form.price);  // Add date if necessary
 				formData.append('total', this.form.total);   // Add date if necessary
@@ -266,6 +279,7 @@ export default {
 				const formData = new FormData();
 				formData.append('pro_id', this.form.pro_id);
 				formData.append('pro_name', this.form.pro_name);
+				formData.append('size', this.form.size);
 				formData.append('amount', this.form.amount);
 				formData.append('price', this.form.price);  // Add date if necessary
 				formData.append('total', this.form.total);  // Add date if necessary
