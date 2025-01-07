@@ -25,10 +25,12 @@
                                 <input type="text" class="form-control mb-2" v-model="form.pro_name" placeholder="..." required>
 
                                 <label  class="form-label fs-6">ຈຳນວນ:</label>
-                                <input type="number" class="form-control mb-2" v-model.number="form.amount" required>
+								<input type="text" id="amount" class="form-control" v-model="form.amount"
+								 @input="validateNumericInput('amount')"/>
                               
                                 <label  class="form-label fs-6">ລາຄາ:</label>
-                                <input type="number" class="form-control mb-2" v-model.number="form.price" required>
+								<input type="text" id="price" class="form-control" v-model="form.price"
+								 @input="validateNumericInput('price')"/>
 
                                 <label  class="form-label fs-6">ລາຄາລວມ:</label>
                                 <input type="number" class="form-control mb-2" v-model="form.total" readonly>
@@ -72,11 +74,27 @@ export default {
 			this.$emit('reset-form');
 			this.closeModal(); // Close modal after reset
 		},
+		validateNumericInput(field) {
+			const value = this.form[field];
+
+			this.form[field] = value.replace(/[^0-9.]/g, '');
+		},
+
+		// Validate entire form before submission
+		validateForm() {
+			if (this.form.amount <= 0 || this.form.price <= 0) {
+			Swal.fire("Error", "Amount and Price must be greater than 0.", "error");
+			return false;
+			}
+			return true;
+		},
 		addproduct() {
+			if (!this.validateForm()) return;
 			this.$emit('add-product');
 			this.closeModal(); // Close modal after adding product
 		},
 		updateproduct() {
+			if (!this.validateForm()) return;
 			this.$emit('update-product');
 			this.closeModal(); // Close modal after updating product
 		},

@@ -64,12 +64,12 @@
 						<tr>
 							<th width="1%">ລ/ດ</th>
 							<th width="1%" data-orderable="false">#</th>
-							<th class="text-nowrap">id</th>
+							<th class="text-nowrap">ລະຫັດ</th>
 							<th class="text-nowrap">ຊື່</th>
 							<th class="text-nowrap">email</th>
 							<th class="text-nowrap">ເບີໂທ</th>
 							<th class="text-nowrap">ທີ່ຢູ່</th>
-							<th class="text-nowrap">ໜ້າວຽກ</th>
+							<!-- <th class="text-nowrap">ໜ້າວຽກ</th> -->
 							<th class="text-nowrap">ຈັດການ</th>
 						</tr>
 					</thead>
@@ -84,7 +84,7 @@
 							<td>{{ staff.email }}</td>
 							<td>{{ staff.tell }}</td>
 							<td>{{ staff.village }}, {{ staff.district_name }}, {{ staff.province_name }}</td>
-							<td>{{ staff.service_name }}</td>
+							<!-- <td>{{ staff.service_name }}</td> -->
 							<td>
 								<div class="panel-heading">
 									<div class="btn-group my-n1">
@@ -114,7 +114,8 @@
 			  </div>
 			</div>
 			
-			<Modal :form="form" :isEditing="isEditing" :Services="Services" :provinces="provinces" :districts="districts" 
+			<!-- <Modal :form="form" :isEditing="isEditing" :Services="Services" :provinces="provinces" :districts="districts"  -->
+			<Modal :form="form" :isEditing="isEditing" :provinces="provinces" :districts="districts" 
 				@reset-form="resetForm" 
 				@add-staff="addStaff" 
 				@update-staff="updateStaff"
@@ -138,12 +139,12 @@ export default {
 	data() {
 		return {
 			Staff: [],
-			Services: [],
+			//Services: [],
 			provinces: [],
 			districts: [],
 			form: {
 				staff_id: "",
-				service_id: "",
+				//service_id: "",
 				staff_name: "",
 				staff_surname: "",
 				email: "",
@@ -163,7 +164,7 @@ export default {
 
 	mounted() {
 		this.fetchStaff();
-		this.fetchService();
+		//this.fetchService();
 		this.fetchProvinces();
 	},
 	computed: {
@@ -182,7 +183,7 @@ export default {
 
 	methods: {
 		formatStaffId(id) {
-			return String(id).padStart(10, '0'); // Pads the ID to 10 characters with leading zeros
+			return String(id).padStart(); // Pads the ID to 10 characters with leading zeros
 			},
 		async fetchStaff() {
 			try {
@@ -192,16 +193,14 @@ export default {
 				console.error("Error fetching staff:", error);
 			}
 		},
-
-		async fetchService() {
-			try {
-				const response = await axios.get(`${api}/service`);
-				this.Services = response.data;
-			} catch (error) {
-				console.error("Error fetching service:", error);
-			}
-		},
-
+		// async fetchService() {
+		// 	try {
+		// 		const response = await axios.get(`${api}/service`);
+		// 		this.Services = response.data;
+		// 	} catch (error) {
+		// 		console.error("Error fetching service:", error);
+		// 	}
+		// },
 		async fetchProvinces() {
 			try {
 				const response = await axios.get(`${api}/provinces`);
@@ -238,7 +237,7 @@ export default {
 			this.editId = null;
 			this.form = {
 				staff_id: "",
-				service_id: "",
+				//service_id: "",
 				staff_name: "",
 				staff_surname: "",
 				email: "",
@@ -255,7 +254,7 @@ export default {
 			this.editId = staff.staff_id;
 			this.form = {
 				staff_id: staff.staff_id,
-				service_id: staff.service_id_fk,
+				//service_id: staff.service_id_fk,
 				staff_name: staff.staff_name,
 				staff_surname: staff.staff_surname,
 				email: staff.email,
@@ -272,7 +271,7 @@ export default {
 			try {
 				const formData = new FormData();
 				formData.append('staff_id', this.form.staff_id);
-				formData.append('service_id_fk', this.form.service_id);
+				//formData.append('service_id_fk', this.form.service_id);
 				formData.append('staff_name', this.form.staff_name);
 				formData.append('staff_surname', this.form.staff_surname);
 				formData.append('email', this.form.email);
@@ -304,7 +303,7 @@ export default {
 			try {
 				const formData = new FormData();
 				formData.append('staff_id', this.form.staff_id);
-				formData.append('service_id_fk', this.form.service_id);
+				//formData.append('service_id_fk', this.form.service_id);
 				formData.append('staff_name', this.form.staff_name);
 				formData.append('staff_surname', this.form.staff_surname);
 				formData.append('email', this.form.email);

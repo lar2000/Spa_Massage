@@ -13,9 +13,9 @@
             <li class="dt-paging-button page-item" :class="{ disabled: currentPage === 1 }">
               <button class="page-link previous" @click="goToPage(currentPage - 1)" :disabled="currentPage === 1" aria-label="Previous">‹</button>
             </li>
-            <li v-for="page in totalPages" :key="page" class="dt-paging-button page-item" :class="{ active: currentPage === page }">
+            <!-- <li v-for="page in totalPages" :key="page" class="dt-paging-button page-item" :class="{ active: currentPage === page }">
               <button class="page-link" @click="goToPage(page)">{{ page }}</button>
-            </li>
+            </li> -->
             <li class="dt-paging-button page-item" :class="{ disabled: currentPage === totalPages }">
               <button class="page-link next" @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages" aria-label="Next">›</button>
             </li>

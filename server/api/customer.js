@@ -2,15 +2,12 @@ const express = require('express');
 const db = require('./db_connection');
 
 const customer = express.Router();
+const Fields = ['cust_id', 'cust_name', 'cust_surname', 'email', 'status', 'state'];
 
-// Define the fields to use for customer operations
-const customerFields = ['cust_id','cust_name','cust_surname','email','status'];
-const InsertFields = ['cust_id','cust_name','cust_surname','email','status'];
-
-// Get all customers
+// Get all customers with state = 1 (active)
 customer.get('/customer', (req, res) => {
   db.query(
-    `SELECT ${customerFields.join(', ')} FROM customer`,
+    `SELECT ${Fields.join(', ')} FROM customer WHERE state = 1`,
     (err, results) => {
       if (err) {
         console.error(err.message);
@@ -23,55 +20,67 @@ customer.get('/customer', (req, res) => {
 
 // Add new customer
 customer.post('/customer', (req, res) => {
-  const Defaults = { ...req.body, status: req.body.status !== undefined ? req.body.status: true,
+  const Defaults = { ...req.body, status: 0, state: 1}; // Automatically set status to 1
 
-  };
-  const values = InsertFields.map(field => Defaults[field]);
+  // Function to generate a random cust_id starting with 'N-' and followed by 5 random characters
+  function generateRandomCustId() {
+    const randomId = Math.random().toString(36).substr(2, 5).toUpperCase(); // 5 random alphanumeric characters
+    return `N-${randomId}`;
+  }
 
-  const query = `INSERT INTO customer (${InsertFields.join(', ')}) 
-  VALUES (${InsertFields.map(() => '?').join(', ')})`;
+  const custId = generateRandomCustId(); // Generate the cust_id
+  const values = Fields.map(field => (field === 'cust_id' ? custId : Defaults[field]));
+
+  const query = `INSERT INTO customer (${Fields.join(', ')}) 
+  VALUES (${Fields.map(() => '?').join(', ')})`;
 
   db.query(query, values, (err, result) => {
     if (err) {
       console.error(err.message);
       return res.status(500).json({ error: 'Failed to add customer.' });
     }
-    res.status(201).json({ id: result.insertId, ...Defaults });
+    res.status(201).json({ id: result.insertId, ...Defaults, cust_id: custId });
   });
 });
 
 // Update an existing customer
 customer.put('/customer/:id', (req, res) => {
-  const values = customerFields.map(field => req.body[field]);
+  const { cust_name, cust_surname, email, status } = req.body;
 
-  // Validate input data
-  for (let i = 0; i < customerFields.length; i++) {
-    if (!values[i]) {
-      return res.status(400).json({ error: `${customerFields[i]} is required.` });
-    }
+  if (!cust_name || !cust_surname || !email || typeof status === 'undefined') {
+    return res.status(400).json({ error: 'cust_name, cust_surname, email, and status are required.' });
   }
 
-  const query = `UPDATE customer SET ${customerFields.map(field => `${field} = ?`).join(', ')} 
-  WHERE cust_id = ?`;
-  db.query(query, [...values, req.params.id], (err) => {
+  const query = `
+    UPDATE customer 
+    SET cust_name = ?, cust_surname = ?, email = ?, status = ?
+    WHERE cust_id = ?`;
+
+  const values = [cust_name, cust_surname, email, status, req.params.id];
+
+  db.query(query, values, (err, result) => {
     if (err) {
       console.error(err.message);
       return res.status(500).json({ error: 'Failed to update customer.' });
     }
-    res.status(200).json({ id: req.params.id, ...req.body });
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Customer not found.' });
+    }
+    res.status(200).json({ message: 'Customer updated successfully.', id: req.params.id, ...req.body });
   });
 });
 
-// Delete a customer
+// Delete a customer (soft delete by setting state to 0)
 customer.delete('/customer/:id', (req, res) => {
-  const query = 'UPDATE customer SET status = ? WHERE cust_id = ?';
-  const values = [false, req.params.id];
+  const query = 'UPDATE customer SET state = 0 WHERE cust_id = ?';
+  const values = [req.params.id];
+
   db.query(query, values, (err) => {
     if (err) {
       console.error(err.message);
       return res.status(500).json({ error: 'Failed to delete customer.' });
     }
-    res.status(204).send(); // No content to send back
+    res.status(204).send();
   });
 });
 

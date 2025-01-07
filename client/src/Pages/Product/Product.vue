@@ -51,8 +51,17 @@
 						<div class="actions mb-2">
 							<tr>
 								<td width="1%">
+									<a href="#modal-dialog" class="btn btn-sm btn-gray ms-2" data-bs-toggle="modal">
+										<i class="fas fa-cloud-arrow-down"></i> ນຳເຂົ້າ
+									</a>
+								</td>
+							</tr>
+						</div>
+						<div class="actions mb-2">
+							<tr>
+								<td width="1%">
 									<a href="#modal-dialog" class="btn btn-sm btn-success ms-2" data-bs-toggle="modal">
-										<i class="fas fa-user-plus"></i>
+										<i class="fas fa-plus"></i>
 									</a>
 								</td>
 							</tr>

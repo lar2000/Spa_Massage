@@ -18,14 +18,14 @@
 								<input type="file" class="d-none" id="profile" @change="handleFileUpload">
 							</label>
 						</div>
-							<div class="col-lg-8">
+							<!-- <div class="col-lg-8">
 								<select v-model="form.service_id" class="form-select" required>
 									<option value="" disabled>ເລືອກໃຊ້ບໍລິການ</option>
 									<option v-for="service in Services" :key="service.service_id" :value="service.service_id">
 										{{ service.service_name }}
 									</option>
 								</select>
-							</div>
+							</div> -->
 						</div>
 						<div class="form-group row mb-3">
 							<label class="col-lg-2 col-form-label form-label" for="name">ຊື່ :</label>
@@ -101,7 +101,7 @@ export default {
 	props: {
 		form: Object,
 		isEditing: Boolean,
-		Services: Array,
+		//Services: Array,
 		provinces: Array,
 		districts: Array,
 	},

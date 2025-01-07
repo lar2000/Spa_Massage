@@ -52,10 +52,26 @@
 					<div class="menu-text">ໜ້າຫຼັກ</div>
 					</router-link>
 					</div>
-					<div class="menu-item has-sub fs-5">
+					<div class="menu-item fs-5">
+					 <router-link to="/booking" class="menu-link">
+					 <div class="menu-icon">
+					 <i class="fas fa-bookmark"></i>
+					 </div>
+					 <div class="menu-text">ຈອງບໍລິການ</div>
+					 </router-link>
+					 </div>
+					 <div class="menu-item fs-5">
+					 <router-link to="/booking" class="menu-link">
+					 <div class="menu-icon">
+					 <i class="fas fa-bed"></i>
+					 </div>
+					 <div class="menu-text">ເຂົ້າໃຊ້ບໍລິການ</div>
+					 </router-link>
+					 </div>
+					 <div class="menu-item has-sub fs-5">
 						<a href="javascript:void(0);" class="menu-link">
 							<div class="menu-icon"><i class="fa-solid fa-star"></i></div>
-							<div class="menu-text">ການບໍລິການ</div>
+							<div class="menu-text">ບໍລິການ</div>
 							<div class="menu-caret"></div>
 						</a>
 						<div class="menu-submenu fs-14px">
@@ -67,15 +83,6 @@
 							</div>
 						</div>
 					</div>
-					<div class="menu-item fs-5">
-					<router-link to="/booking" class="menu-link">
-					<div class="menu-icon">
-					<i class="fas fa-bookmark"></i>
-					</div>
-					<div class="menu-text">ຈອງບໍລິການ</div>
-					</router-link>
-					</div>
-
 					<div class="menu-item has-sub fs-5">
 						<a href="javascript:void(0);" class="menu-link">
 							<div class="menu-icon"><i class="fa-solid fa-file-lines"></i></div>

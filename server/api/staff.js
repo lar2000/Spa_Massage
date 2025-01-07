@@ -6,20 +6,18 @@ const db = require('./db_connection');
 
 const staff = express.Router();
 // Define the fields in an array
-const staffFields = [
-  'staff_id',
-  'service_id_fk',
+const Fields = [
   'staff_name',
   'staff_surname',
   'email',
   'tell',
   'village',
   'district',
-  'province'
+  'province',
+  'state'
 ];
-const staffFieldsString = staffFields.join(', ');
-
-const staffSetClause = staffFields.map(field => `${field} = ?`).join(', ');
+const insertFields = Fields.join(', ');
+const SetClause = Fields.map(field => `${field} = ?`).join(', ');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -38,11 +36,11 @@ const upload = multer({ storage });
 
 staff.get('/staff', (req, res) => {
   db.query(
-    `SELECT ${staffFieldsString}, profile, service.service_name, tbl_district.district_name, tbl_province.province_name 
+    `SELECT staff_id, ${Fields}, profile, tbl_district.district_name, tbl_province.province_name 
      FROM staff
-     LEFT JOIN service ON staff.service_id_fk=service.service_id
      LEFT JOIN tbl_district ON staff.district=tbl_district.district_id 
-     LEFT JOIN tbl_province ON staff.province=tbl_province.province_id`,
+     LEFT JOIN tbl_province ON staff.province=tbl_province.province_id 
+     WHERE staff.state = 1`,
     (err, results) => {
       if (err) {
         return res.status(500).json({ error: err.message });
@@ -52,29 +50,53 @@ staff.get('/staff', (req, res) => {
   );
 });
 
-// Add new staff
 staff.post('/staff', upload.single('profile'), (req, res) => {
-  const values = staffFields.map(field => req.body[field]);
-  const profile = req.file ? `uploads/profiles/${req.file.filename}` : null;
-
-  const query = `INSERT INTO staff (${staffFieldsString}, profile) 
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-  db.query(query, [...values, profile], (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
+  // Ensure 'state' defaults to 1 if not provided
+  const values = Fields.map(field => {
+    if (field === 'state') {
+      return req.body[field] != null ? req.body[field] : 1;
     }
-    res.status(201).json({ id: result.insertId, ...req.body, profile });
+    return req.body[field];
   });
-});
-staff.put('/staff/:id', upload.single('profile'), (req, res) => {
-  const values = staffFields.map(field => req.body[field]);
+
   const profile = req.file ? `uploads/profiles/${req.file.filename}` : null;
 
-  // Set up the base query
-  let query = `UPDATE staff SET ${staffSetClause}`;
+  function generateRandomStaffId() {
+    const randomId = Math.random().toString(36).substr(2, 5).toUpperCase();
+    return `S-${randomId}`;
+  }
+
+  function insertStaff() {
+    const staffId = generateRandomStaffId();
+    // Dynamically construct the query using insertFields
+    const query = `INSERT INTO staff (staff_id, ${insertFields}, profile) 
+                   VALUES (?, ${Fields.map(() => '?').join(', ')}, ?)`;
+    
+    db.query(query, [staffId, ...values, profile], (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.status(201).json({ id: staffId, ...req.body, profile });
+    });
+  }
+
+  insertStaff();
+});
+
+staff.put('/staff/:id', upload.single('profile'), (req, res) => {
+  // Handle state defaulting to 1 if null or undefined
+  const values = Fields.map(field => {
+    if (field === 'state') {
+      return req.body[field] != null ? req.body[field] : 1; // Default to 1 if null or undefined
+    }
+    return req.body[field];
+  });
+
+  const profile = req.file ? `uploads/profiles/${req.file.filename}` : null;
+
+  let query = `UPDATE staff SET ${SetClause}`;
   const queryParams = [...values];
 
-  // Only include profile in the query if it's not null
   if (profile) {
     query += `, profile = ?`;
     queryParams.push(profile);
@@ -83,7 +105,6 @@ staff.put('/staff/:id', upload.single('profile'), (req, res) => {
   query += ` WHERE staff_id = ?`;
   queryParams.push(req.params.id);
 
-  // Execute the query
   db.query(query, queryParams, (err) => {
     if (err) {
       return res.status(500).json({ error: err.message });
@@ -92,9 +113,8 @@ staff.put('/staff/:id', upload.single('profile'), (req, res) => {
   });
 });
 
-
 staff.delete('/staff/:id', (req, res) => {
-  db.query('DELETE FROM staff WHERE staff_id = ?', [req.params.id], (err) => {
+  db.query('UPDATE staff SET state = 0 WHERE staff_id = ?', [req.params.id], (err) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }

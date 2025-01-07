@@ -27,7 +27,10 @@
 						<li><a href="#"><i class="fab fa-instagram f-s-14"></i></a></li>
 						<li><a href="#"><i class="fab fa-dribbble f-s-14"></i></a></li>
 						<li><a href="#"><i class="fab fa-google f-s-14"></i></a></li>
-            <li><router-link to="/" class="btn-default active">Admin <i class="fas fa-angle-right"></i></router-link></li>
+            			<li>
+							<router-link to="/" class="btn-default active">Admin <i class="fas fa-angle-right"></i>
+							</router-link>
+					    </li>
 					</ul>
 				</div>
 			</div>

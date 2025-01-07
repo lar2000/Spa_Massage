@@ -54,6 +54,9 @@ export default {
   name: "ExVueCustModal",
   data(){
 	return {
+		// services: [
+        //     "VIP", "Normal"], 
+        // selectedServices: [],
 	
 	}
   },

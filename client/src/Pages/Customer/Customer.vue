@@ -42,6 +42,14 @@
 								</option>
 							</select>
 						</div>
+						<div class="dt-length mb-2 ms-2">
+							<select name="status-filter" class="form-select form-select-sm" v-model="selectedStatus" @change="filterStatus">
+								<option value="">All</option>
+								<option value="0">Booking</option>
+								<option value="1">In progress</option>
+								<option value="2">Done</option>
+							</select>
+						</div>
 					</div>
 					<div class="d-md-flex justify-content-between align-items-center dt-layout-end col-md-auto ms-auto">
 						<div class="dt-search mb-2">
@@ -63,7 +71,7 @@
 					<thead>
 						<tr>
 							<th width="1%">ລ/ດ</th>
-							<th class="text-nowrap">id</th>
+							<th class="text-nowrap">ລະຫັດ</th>
 							<th class="text-nowrap">ຊື່</th>
 							<th class="text-nowrap">email</th>
 							<th class="text-nowrap">ສະຖານະ</th>
@@ -71,18 +79,18 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="(customer, index) in paginatedcustomer" :key="customer.cust_id" class="odd gradeX">
+						<tr v-for="(customer, index) in paginatedcustomer" :key="customer.id" class="odd gradeX">
 							<td width="1%" class="fw-bold">{{ index + 1 + (currentPage - 1) * itemsPerPage }}</td>
 							<td>{{ formatcustomerId(customer.cust_id) }}</td>
 							<td>{{ customer.cust_name }} {{ customer.cust_surname }}</td>
 							<td>{{ customer.email }}</td>
 							<td>
-							<span v-if="customer.status === 1" class="badge border border-success text-success px-2 pt-5px pb-5px rounded fs-12px d-inline-flex align-items-center">
-							<i class="fa fa-circle fs-9px fa-fw me-5px"></i> ສະມາຊິກ
-							</span>
+							<span v-if="customer.status === 2" class="badge border border-success text-success px-2 pt-5px pb-5px rounded fs-12px d-inline-flex align-items-center">
+							<i class="fa fa-circle fs-9px fa-fw me-5px"></i>Done</span>
+							<span v-else-if="customer.status === 1" class="badge border border-primary text-primary px-2 pt-5px pb-5px rounded fs-12px d-inline-flex align-items-center">
+							<i class="fa fa-circle fs-9px fa-fw me-5px"></i>In progress</span>
 							<span v-else class="badge border border-warning text-warning px-2 pt-5px pb-5px rounded fs-12px d-inline-flex align-items-center">
-							<i class="fa fa-circle fs-9px fa-fw me-5px"></i> ທົ່ວໄປ
-							</span>
+								<i class="fa fa-circle fs-9px fa-fw me-5px"></i>Booking</span>
 							</td>
 								<div class="panel-heading">
 									<div class="btn-group my-n1">
@@ -131,13 +139,15 @@ export default {
 		return {
 			customer: [],
 			form: { 
-        cust_id: "", 
-        cust_name: "", 
-        cust_surname: "", 
-        email: "" 
-      },
+				id: null, 
+				cust_id: "",  
+				cust_name: "", 
+				cust_surname: "", 
+				email: "" 
+        },
 			isEditing: false,
 			editId: null,
+			selectedStatus: "",
 			currentPage: 1,
 			itemsPerPage: 10,
 			searchQuery: "",
@@ -154,15 +164,15 @@ export default {
 		filteredcustomer() {
 			return this.customer.filter(customer => {
 				const idMatch = customer.cust_id.toString().includes(this.searchQuery);
+				const statusMatch = this.selectedStatus === "" || customer.status.toString() === this.selectedStatus;
 				const nameMatch = `${customer.cust_name} ${customer.cust_surname}`.toLowerCase().includes(this.searchQuery.toLowerCase());
-				const statusMatch = customer.status === 1 ? "ສະມາຊິກ" : "ທົ່ວໄປ";
-				return idMatch || nameMatch || statusMatch.toLowerCase().includes(this.searchQuery.toLowerCase());;
+				return (idMatch || nameMatch) && statusMatch;
 			});
 		},
 	},
 	methods: {
 		formatcustomerId(id) {
-			return String(id).padStart(10, "0");
+			return String(id).padStart();
 		},
 		async fetchcustomer() {
 			try {
@@ -183,7 +193,8 @@ export default {
 			this.isEditing = false;
 			this.editId = null;
 			this.form = { 
-          cust_id: null, 
+          id: null, 
+          cust_id: "", 
           cust_name: "", 
           cust_surname: "", 
           email: "" 
@@ -225,7 +236,7 @@ export default {
 			if (confirmation.isConfirmed) {
 				try {
 					await axios.delete(`${api}/customer/${id}`);
-					this.customer = this.customer.filter(customer => customer.cust_id !== id);
+					this.customer = this.customer.filter(customer => customer.id !== id);
 					Swal.fire("Deleted!", "Customer has been marked as inactive.", "success");
 					this.fetchcustomer();
 				} catch (error) {
