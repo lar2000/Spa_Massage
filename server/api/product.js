@@ -6,6 +6,7 @@ const db = require('./db_connection');
 
 const product = express.Router();
 const productFields = [
+  'protype_id_fk',
   'pro_name',
   'size',
   'amount',
@@ -70,9 +71,8 @@ product.post('/product', upload.single('img_path'), (req, res) => {
     if (err) {
       return res.status(500).json({ error: 'Error generating unique product ID' });
     }
-
     const query = `INSERT INTO product (${productFieldsString}, img_path, pro_id) 
-    VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
     db.query(query, [...values, image, proId], (err, result) => {
       if (err) {
         return res.status(500).json({ error: err.message });
@@ -82,15 +82,13 @@ product.post('/product', upload.single('img_path'), (req, res) => {
   });
 });
 
-// Update product details
 product.put('/product/:id', upload.single('img_path'), (req, res) => {
-  const productFields = ['pro_name', 'size', 'amount', 'price', 'total']; 
+  const productFields = ['protype_id_fk','pro_name', 'size', 'amount', 'price', 'total']; 
   const values = productFields.map(field => req.body[field]);
   const image = req.file ? `uploads/images/${req.file.filename}` : null;
 
   let query = `UPDATE product SET ${productFields.map(field => `${field} = ?`).join(', ')}`;
   const queryParams = [...values];
-
   // Only include image in the query if it's not null
   if (image) {
     query += `, img_path = ?`;
@@ -100,7 +98,6 @@ product.put('/product/:id', upload.single('img_path'), (req, res) => {
   query += ` WHERE pro_id = ?`;
   queryParams.push(req.params.id);
 
-  // Execute the query
   db.query(query, queryParams, (err) => {
     if (err) {
       return res.status(500).json({ error: err.message });
@@ -108,7 +105,37 @@ product.put('/product/:id', upload.single('img_path'), (req, res) => {
     res.status(200).json({ id: req.params.id, ...req.body, image });
   });
 });
-// Delete product
+
+product.patch('/product', (req, res) => {
+  const { pro_id, amount } = req.body;
+
+  if (!pro_id || amount === undefined) {
+    return res.status(400).json({ error: 'pro_id and amount are required' });
+  }
+  // Step 1: Retrieve the current amount and price from the database
+  db.query('SELECT amount, price FROM product WHERE pro_id = ?', [pro_id], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    const currentAmount = parseInt(results[0].amount, 10);
+    const price = parseInt(results[0].price, 10);
+    const newAmount = currentAmount + parseInt(amount, 10);
+    const total = price * newAmount;
+
+    const query = 'UPDATE product SET amount = ?, total = ? WHERE pro_id = ?';
+    db.query(query, [newAmount, total, pro_id], (err) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.status(200).json({ message: 'Product updated successfully', pro_id, newAmount, total });
+    });
+  });
+});
+
 product.delete('/product/:id', (req, res) => {
   db.query('DELETE FROM product WHERE pro_id = ?', [req.params.id], (err) => {
     if (err) {

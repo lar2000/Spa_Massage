@@ -51,9 +51,13 @@
 						<div class="actions mb-2">
 							<tr>
 								<td width="1%">
-									<a href="#modal-dialog" class="btn btn-sm btn-gray ms-2" data-bs-toggle="modal">
+									<!-- <a href="#modal-dialog" class="btn btn-sm btn-gray ms-2" data-bs-toggle="modal"
+									@click="showImportproduct">
 										<i class="fas fa-cloud-arrow-down"></i> ນຳເຂົ້າ
-									</a>
+									</a> -->
+									<router-link to="/import" class="btn btn-sm btn-gray ms-2">
+										<i class="fas fa-cloud-arrow-down"></i> ນຳເຂົ້າ
+									</router-link>
 								</td>
 							</tr>
 						</div>
@@ -79,6 +83,7 @@
 							<th class="text-nowrap">ຈຳນວນ</th>
 							<th class="text-nowrap">ລາຄາ</th>
 							<th class="text-nowrap">ລາຄາລວມ</th>
+							<th class="text-nowrap">ປະເພດ</th>
 							<th class="text-nowrap">ຈັດການ</th>
 						</tr>
 					</thead>
@@ -86,14 +91,15 @@
 						<tr v-for="(product, index) in paginatedproduct" :key="product.pro_id" class="odd gradeX">
 							<td width="1%" class="fw-bold">{{ index + 1 + (currentPage - 1) * itemsPerPage }}</td>
 							<td width="1%" class="with-img">
-								<img v-if="product.img_path" :src="`http://localhost:5000/${product.img_path}`" class="rounded h-30px my-n1 mx-n1"/>
+								<img v-if="product.img_path" :src="`${api}/${product.img_path}`" class="rounded h-30px my-n1 mx-n1"/>
 							</td>
 							<td>{{ product.pro_id }}</td>
 							<td>{{ product.pro_name }}</td>
 							<td>{{ product.size }} ml</td>
-							<td>{{ product.amount }}</td>
+							<td :class="{ 'text-danger': product.amount < 10 }">{{ product.amount }}</td>
 							<td>{{ product.price }}</td>
 							<td>{{ product.total }}</td>
+							<td>{{ product.protype_name }}</td>
 							<td>
 								<div class="panel-heading">
 									<div class="btn-group my-n1">
@@ -127,9 +133,10 @@
 			  </div>
 			</div>
 			<ViewModal :product="selectedProduct" />
-			<Modal :form="form" :isEditing="isEditing" 
+			<Modal :form="form" :isEditing="isEditing" :isImporting="isImporting" :product="product" :Product_type="Product_type"
 				@reset-form="resetForm" 
 				@add-product="addproduct" 
+				@import-product="importproduct" 
 				@update-product="updateproduct"/>
 	</div>
 </template>
@@ -152,17 +159,20 @@ export default {
 
   data() {
 		return {
+			api,
 			product: [],
+			Product_type: [],
 			form: {
 				pro_id: "",
+				protype_id: "",
 				pro_name: "",
 				size: "",
 				amount: "",
 				price: "",
 				total: 0,
 				img_path: "",
-			
 			},
+			isImporting: false,
 			isEditing: false,
 			editId: null,
 			currentPage: 1,
@@ -174,6 +184,7 @@ export default {
 
 	mounted() {
 		this.fetchproduct();
+		this.fetchProduct_type();
 	},
 	computed: {
 		paginatedproduct() {
@@ -182,9 +193,10 @@ export default {
 		},
 		filteredproduct() {
 			return this.product.filter(product => {
-				const productId_Match = product.pro_id.toString().includes(this.searchQuery);
+				const productId_Match = product.pro_id.toString().toLowerCase().includes(this.searchQuery.toLowerCase());
+				const type_Match = product.protype_name.toString().toLowerCase().includes(this.searchQuery.toLowerCase());
 				const productName_Match = `${product.pro_name} ${product.pro_surname}`.toLowerCase().includes(this.searchQuery.toLowerCase());
-				return productId_Match || productName_Match;
+				return productId_Match || productName_Match || type_Match;
 			});
 		},
 	},
@@ -196,13 +208,29 @@ export default {
 	methods: {
 		async fetchproduct() {
 			try {
-				const response = await axios.get(`${api}/product`);
-				this.product = response.data;
+				const product = await axios.get(`${api}/product`);
+				const protype = await axios.get(`${api}/protype`);
+
+				// Create a map of product types
+				const protypeMap = {};
+				protype.data.forEach(pt => {
+					protypeMap[pt.protype_id] = pt.protype_name;
+				});
+				this.product = product.data.map(product => ({
+					...product, protype_name: protypeMap[product.protype_id_fk] || 'Unknown'
+				}));
 			} catch (error) {
-				console.error("Error fetching product:", error);
+				console.error("Error fetching data:", error);
 			}
 		},
-		
+		async fetchProduct_type() {
+			try {
+				const response = await axios.get(`${api}/protype`);
+				this.Product_type = response.data;
+			} catch (error) {
+				console.error("Error fetching produc type:", error);
+			}
+		},
 		updatePageLength(event) {
 			this.itemsPerPage = Number(event.target.value);
 			this.currentPage = 1; // Reset to first page when items per page changes
@@ -217,8 +245,10 @@ export default {
 
 		resetForm() {
 			this.isEditing = false;
+			this.isImporting = false;
 			this.editId = null;
 			this.form = {
+				protype_id: "",
 				pro_name: "",
 				size: "",
 				amount: 0,
@@ -230,9 +260,11 @@ export default {
 
 		showEditForm(product) {
 			this.isEditing = true;
+			this.isImporting = false;
 			this.editId = product.pro_id;
 			this.form = {
 				pro_id: product.pro_id,
+				protype_id: product.protype_id_fk,
 				pro_name: product.pro_name,
 				size: product.size,
 				amount: product.amount,
@@ -241,6 +273,15 @@ export default {
 				img_path: product.img_path,
 			};
         },
+		showImportproduct() {
+			this.isImporting = true;
+			this.isEditing = false;
+			this.editId = this.product.pro_id;
+			this.form = {
+				pro_id: this.product.pro_id,
+				amount: tthis.product.amount,
+			}
+		},
 		viewProduct(product) {
 				this.selectedProduct = product; // Set the selected product to view
 		    },
@@ -249,6 +290,7 @@ export default {
 			try {
 				const formData = new FormData();
 				formData.append('pro_id', this.form.pro_id);
+				formData.append('protype_id_fk', this.form.protype_id);
 				formData.append('pro_name', this.form.pro_name);
 				formData.append('size', this.form.size);
 				formData.append('amount', this.form.amount);
@@ -278,6 +320,7 @@ export default {
 			try {
 				const formData = new FormData();
 				formData.append('pro_id', this.form.pro_id);
+				formData.append('protype_id_fk', this.form.protype_id);
 				formData.append('pro_name', this.form.pro_name);
 				formData.append('size', this.form.size);
 				formData.append('amount', this.form.amount);
@@ -300,9 +343,30 @@ export default {
 			} catch (error) {
 				Swal.fire("Error", "Error updating product!", "error");
 				console.error(error);
+		  }
+	    },
+		async importproduct() { 
+			try {
+				// Prepare the data as a plain object
+				const data = {
+				pro_id: this.form.pro_id,
+				amount: this.form.amount,
+				};
+				await axios.patch(`${api}/product`, data, {
+				headers: {
+					'Content-Type': 'application/json',  // Ensure you're sending JSON
+				}
+				});
+
+				await Swal.fire("Success", "Product imported successfully!", "success");
+				this.fetchproduct();
+				this.resetForm();
+			} catch (error) {
+				// Handle error if something goes wrong
+				console.error("Error importing product:", error);
+				Swal.fire("Error", "Failed to import product. Please try again.", "error");
 			}
 			},
-
 
 		async deleteproduct(id) {
 			const confirmation = await Swal.fire({

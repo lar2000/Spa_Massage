@@ -12,7 +12,7 @@
                 <img :src="`http://localhost:5000/${product.img_path}`" class="img-fluid rounded shadow" alt="Product Image"/>
               </div>
               <div class="item-info">
-				<h4 class="item-title">{{ product.pro_name }}<br>{{ product.size }} ml</h4>
+				<h4 class="item-title">{{ product.protype_name }}: {{ product.pro_name }} <br> {{ product.size }} ml</h4>
                 <p class="item-desc" :class="{ 'text-danger': product.amount < 10 }">
                 stock: {{ product.amount }}
               </p>

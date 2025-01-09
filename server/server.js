@@ -13,14 +13,18 @@ const service = require('./api/service');
 const staff = require('./api/staff');  
 const country = require('./api/country');
 const customer = require('./api/customer');
+const imp = require('./api/imp');
 const product = require('./api/product');
+const protype = require('./api/protype');
 
 
 app.use('/', service)
 app.use('/', staff)
 app.use('/', country)
 app.use('/', customer)
+app.use('/', imp)
 app.use('/', product)
+app.use('/', protype)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Start server

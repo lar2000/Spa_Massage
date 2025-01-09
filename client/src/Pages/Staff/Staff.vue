@@ -77,7 +77,7 @@
 						<tr v-for="(staff, index) in paginatedStaff" :key="staff.staff_id" class="odd gradeX">
 							<td width="1%" class="fw-bold">{{ index + 1 + (currentPage - 1) * itemsPerPage }}</td>
 							<td width="1%" class="with-img">
-								<img v-if="staff.profile" :src="`http://localhost:5000/${staff.profile}`" class="rounded h-30px my-n1 mx-n1"/>
+								<img v-if="staff.profile" :src="`${api}/${staff.profile}`" class="rounded h-30px my-n1 mx-n1"/>
 							</td>
 							<td>{{ staff.staff_id }}</td>
 							<td>{{ staff.staff_name }} {{ staff.staff_surname }}</td>
@@ -154,6 +154,7 @@ export default {
 				district: "",
 				profile: "",
 			},
+			api,
 			isEditing: false,
 			editId: null,
 			currentPage: 1,
